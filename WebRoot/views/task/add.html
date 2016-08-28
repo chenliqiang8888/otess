@@ -1,0 +1,212 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+<div class="form-group">
+  <div class="pull-left">
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active" id="taskinfo"><a href="#base">基本信息</a></li>
+  <li role="presentation" id="taskitem"><a href="#">任务项管理</a></li>
+</ul>
+<div class="tab-content" style="margin-top:15px;">
+  <div role="tabpanel" class="tab-pane active" id="base">
+    <form class="form-horizontal" id="formTask" action="${base}/task/dosave" method="post"  data-bv-message="This value is not valid" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+      <input type="hidden" name="task.o_status" value="0"/>
+      <input type="hidden" name="task.t_resolution" value="0"/>
+      <input type="hidden" name="task.o_userid" value="0"/>
+      <input type="hidden" name="task.t_no" value="${t_no}"/>
+      <input type="hidden" name="task.t_weeks" value=""/>      
+      <input type="hidden" id="filetype" value="add"/>
+      <div class="form-group" id="task_t_simple">
+	    <label for="t_name" class="col-xs-2 control-label"></label>
+        <div class="col-xs-5">
+        <label class="radio-inline">
+		  <input type="radio" name="task.t_simple" id="inlineRadio1" value="1" checked> 简易
+		</label>
+		<label class="radio-inline">
+		  <input type="radio" name="task.t_simple" id="inlineRadio2" value="0"> 高级
+		</label>
+		</div>
+      </div>
+	  <div class="form-group">
+	    <label for="t_name" class="col-xs-2 control-label">任务名称</label>
+	    <div class="col-xs-5">
+	      <input type="text" class="form-control" id="task.t_name" value="${t_name}" name="task.t_name" placeholder="任务名称" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for=""t_resolution"" class="col-xs-2 control-label">默认分辨率</label>
+	    <div class="col-xs-5">	 
+	    <div class="input-group input-group-sm">
+	      <select class="form-control" name="task.mr_id">
+	      	<#list resList as x>
+	        <option value="${x.mr_id!}">${x.mr_w!}×${x.mr_h!}</option>
+	        </#list>
+	      </select>
+	      <div class="input-group-btn">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="modal" data-target="#resmodal"><span class="glyphicon glyphicon-plus"></span> 添新增分辨率
+			</button>
+          </div>
+	    </div>     
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="t_type" class="col-xs-2 control-label">任务类型</label>
+	    <div class="col-xs-5">
+	      <select class="form-control" name="task.t_type">
+	        <option value="2">普通任务</option>
+			<option value="3">空闲任务</option>
+			<option value="1">紧急任务</option>
+		  </select> 
+	    </div>
+	  </div>
+	  <div class="form-group" id="task_t_loop">
+	    <label for="t_loop" class="col-xs-2 control-label">播放模式</label>
+	    <div class="col-xs-5">
+	      <!-- <div class="radio">
+	      <label>
+            <input type="radio" name="task.t_loop" value="2">加入播放列表中后立即播放
+          </label>
+          </div> -->
+	      <div class="radio">
+          <label>
+            <input type="radio" name="task.t_loop"  value="0" checked>设定任务开始和结束时间
+          </label>
+          </div>
+	      <div class="radio">
+          <label>
+            <input type="radio" name="task.t_loop"  value="1">每日定时播放 
+          </label>
+          </div>
+          <div id="week" style="display:none;">  
+            <label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="1" checked> 星期一
+			</label>
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="2" checked> 星期二
+			</label>
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="3" checked> 星期三
+			</label> 
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="4" checked> 星期四
+			</label> 
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="5" checked> 星期五
+			</label> 
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="6" checked> 星期六
+			</label> 
+			<label class="checkbox-inline">
+			  <input type="checkbox" name="t_weeks" value="7" checked> 星期日
+			</label>      
+          </div>
+	    </div>
+	  </div>
+	  <div class="form-group date">
+	    <label for="t_begin_time" class="col-xs-2 control-label">开始时间</label>
+	    <div class="col-xs-5">
+	      <input type="text" class="form-control input_date" value="${t_begin_time}" readonly id="t_begin_time" name="task.t_begin_time" placeholder="开始时间" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+	    </div>
+	  </div>
+	  <div class="form-group date">
+	    <label for="t_end_time" class="col-xs-2 control-label">结束时间</label>
+	    <div class="col-xs-5">
+	      <input type="text" class="form-control input_date" value="${t_end_time}" readonly id="t_end_time" name="task.t_end_time" placeholder="开始时间" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+	    </div>
+	  </div>	  
+	  <div class="form-group">
+	    <label for="t_status" class="col-xs-2 control-label">任务状态</label>
+	    <div class="col-xs-5">
+	       <select class="form-control" name="task.t_status">
+	         <option value="1" >未完成</option>
+	         <option value="2" >正常</option>
+	         <!-- <option value="3" >在播放列表中</option> -->
+           </select>	      
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-xs-offset-2 col-xs-10">
+	      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+	      <button type="button" class="btn btn-default btn-sm" onclick="history.go(-1)">返回</button>
+	      
+	    </div>
+	  </div>
+	</form>
+  </div>
+  <div role="tabpanel" class="tab-pane active" id="items">
+  
+  </div>
+
+  <div class="modal fade bs-example-modal-sm" id="resmodal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">    
+	<form class="form-horizontal" method="post" action="${base}/task/createres" id="formRes" data-bv-message="This value is not valid" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+      <div class="modal-content">      
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title" id="mySmallModalLabel">新增分辨率</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+		    <label for="mr_w" class="col-xs-4 control-label">水平像素</label>
+		    <div class="col-xs-8">
+		    <input type="text" class="form-control" id="mr_w" name="mr_w" placeholder="水平像素" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+		    </div>
+	      </div>
+		  <div class="form-group">
+			<label for="mr_w" class="col-xs-4 control-label">垂直像素</label>
+		    <div class="col-xs-8">
+		    <input type="text" class="form-control" id="mr_h" name="mr_h" placeholder="垂直像素"  required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+		    </div>
+		  </div>
+      </div>      
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+      </div>
+	</form>
+    </div>
+  </div>
+</div>
+</#if>
+<#if section="script">
+<script>var task={url:{taskitem:"${base}/taskitem/list/",additem:"${base}/taskitem/add",layout:"${base}/taskitem/layout"},width:window.screen.width,
+    	height:window.screen.height,default0:"1,0,0,1024,768,default0"};</script>
+<script src="${base}/public/javascript/otess.task.js"></script>
+<script>
+$(function(){
+	$("#task_t_loop :radio").on("click",function () {
+		var t_loop=Number($(this).val());
+		  if(t_loop===2){
+	    	  $(".date").hide();
+	          $("#week").hide();
+
+	      } else if (t_loop === 1) {
+	    	  $(".input_date").datetimepicker({
+	    		    format:'H:i',
+	    		    datepicker:false,
+			  });
+	    	  $("#t_begin_time").val(moment().format('HH:mm'));
+	    	  $("#t_end_time").val(moment().add(1,'h').format('HH:mm'));
+	    	  $(".date").show();
+	          $("#week").show();
+	      }else if(t_loop===0){ 
+	    	  $(".input_date").datetimepicker({
+	  		    format:'Y-m-d H:i',
+			    datepicker:true,
+	  		  });
+	    	  $("#t_begin_time").val(moment().format('YYYY-MM-DD HH:mm'));
+	    	  $("#t_end_time").val(moment().add(1,'h').format('YYYY-MM-DD HH:mm'));
+	    	  $(".date").show();
+	          $("#week").hide();
+	      }
+  	});
+})
+</script>
+</#if>
+</@layout>

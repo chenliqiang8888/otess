@@ -1,0 +1,234 @@
+<style>
+.rc-handle-container{position:relative;}
+.rc-handle{position:absolute;width:7px;cursor:ew-resize;margin-left:-3px;}
+html,body, a,p,div, li, span, td, th, label,button,input,select,textarea {font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;}
+</style>
+<input type="hidden" name="index" value="1">
+<div class="form-horizontal">
+  <div id="dbinfo">
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-xs-3 control-label">数据库类型</label>
+	    <div class="col-sm-9">
+	      <select class="form-control" name="dbtype" >
+	      	<option value="1">mssql</option>
+	      	<option value="2">mysql</option>
+	      	<option value="3">oracle</option>
+	      	<!-- <option value="4">db2</option>
+	      	<option value="5">sybase</option>
+	      	<option value="6">access</option> -->
+	      </select>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputPassword3" class="col-xs-3 control-label">数据源</label>
+	    <div class="col-sm-6">
+	      <input type="text" class="form-control" name="dbaddress" id="dbaddress" placeholder="例如：127.0.0.1">
+	    </div>
+	    <div class="col-sm-3"><input type="text" name="dbport" class="form-control" id="dbport" placeholder="端口"></div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputPassword3" class="col-xs-3 control-label">数据库名</label>
+	    <div class="col-sm-9">
+	      <input type="text" class="form-control" name="dbname" id="dbname" placeholder="例如：Otess">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputPassword3" class="col-xs-3 control-label">用户名</label>
+	    <div class="col-sm-9">
+	      <input type="text" class="form-control" name="dbusername" id="dbusername" placeholder="例如：root">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputPassword3" class="col-xs-3 control-label">密码</label>
+	    <div class="col-sm-9">
+	      <input type="password" class="form-control" name="dbpassword" id="dbpassword" placeholder="例如：root">
+	    </div>
+	  </div>
+  </div>
+  <div id="sqlinfo" style="display:none">
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-xs-3 control-label">选择表</label>
+	    <div class="col-sm-9">
+	      <select class="form-control" id="dbtables" name="dbtables" >
+	      </select>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="inputPassword3" class="col-xs-3 control-label">sql语句</label>
+	    <div class="col-sm-9">
+	      <textarea class="form-control" name="dbsql" id="dbsql" placeholder="可以选择表，或者手动输入SQL" rows="8"></textarea>
+	    </div>
+	  </div>
+  </div>
+  <div id="tableinfo" style="display:none">
+  	<input type="hidden" name="scrolltype" value="none">
+	<input type="hidden" name="speed" value="0">
+	<input type="hidden" name="backgroundcolor" value="">
+	
+	<input type="hidden" name="index" value="${taskfile.tf_index}">
+	<input type="hidden" name="tf_media_no" value="${taskfile.tf_media_no}">
+	<input type="hidden" name="tf_id" value="${taskfile.tf_id}">
+	<div>
+		<table class="table table-condensed">
+			<tr class="info">
+				<td class="text-right" style="width:8%">持续时长</td>
+				<td colspan="2">
+					<ul class="list-inline">
+						<li><input type="text" name="dbhour" style="width: 40px;"
+							class="form-control input-sm" value="01" /></li>
+						<li style="padding:0">时</li>
+						<li><input type="text" name="dbminute"
+							class="form-control input-sm" style="width: 40px;" value="00" /></li>
+						<li style="padding:0">分</li>
+						<li><input type="text" name="dbsecond" value="00"
+							style="width: 40px;" class="form-control input-sm" /></li>
+						<li style="padding:0">秒</li>
+					</ul>
+				</td>
+				<td class="text-right" style="width:8%">刷新周期</td>
+				<td colspan="2"><ul class="list-inline">
+						<li><input type="text" name="refreshhour" style="width: 40px;"
+							class="form-control input-sm" value="01" /></li>
+						<li style="padding:0">时</li>
+						<li><input type="text" name="refreshminute"
+							class="form-control input-sm" style="width: 40px;" value="00" /></li>
+						<li style="padding:0">分</li>
+						<li><input type="text" name="refreshsecond" value="00"
+							style="width: 40px;" class="form-control input-sm" /></li>
+						<li style="padding:0">秒</li>
+					</ul></td>
+				<td class="text-right" style="width:8%">选择布局</td>
+				<td colspan="2"><select name="position"
+					class="form-control input-sm"></select></td>
+			</tr>
+		</table>
+	</div>
+	<div style="margin-top:-20px">
+		<table class="table table-condensed">				
+			<tr class="danger">
+				<td class="text-right" style="width:10%">文本颜色</td>
+				<td style="width:10%"><input type="text" name="color"
+					class="form-control input-sm color {required:false,hash:false,pickerClosable:true}" value="000" /></td>
+				<td class="text-right" style="width:10%">文本大小</td>
+				<td><select name="fontsize" class="form-control input-sm"></select></td>
+				<td class="text-right"  style="width:10%">字体</td>
+				<td style="width:10%"><select name="family" class="form-control input-sm"></select></td>
+				<td class="text-right" style="width:10%">字型</td>
+				<td style="width:10%"><select name="fonttype" class="form-control input-sm"></select></td>
+				
+				<td class="text-right" style="width:10%">表宽</td>
+				<td style="width:10%"><input type="text" name="db_width"
+					class="form-control input-sm" value="" /></td>
+				
+			</tr>
+			<tr class="warning">
+				<td class="text-right">水平对齐</td>
+				<td><select name="align" class="form-control input-sm"></select></td>
+				<td class="text-right">垂直对齐</td>
+				<td><select name="valign" class="form-control input-sm"></select></td>
+				<td class="text-right">行高</td>
+				<td><select name="lineheight" class="form-control input-sm"></select></td>
+				<td class="text-right">线条颜色</td>
+				<td><input type="text" name="bordercolor"
+					class="form-control input-sm color {required:false,hash:false,pickerClosable:true}" value="fff" /></td>
+				<td class="text-right" style="width:8%">表高</td>
+				<td><input type="text" name="db_height" class="form-control input-sm" value="" /></td>
+			</tr>
+		</table>
+	</div>
+	<div style="margin-top:-20px">
+		<table class="table table-condensed">
+			<tr class="success">
+				<td class="text-right" style="width:10%">滚动行数</td>
+				<td style="width:10%"><input type="text" name="dbpagecount" class="form-control input-sm" value="10" /></td>
+				<td class="text-right" style="width:10%">滚动周期</td>
+				<td style="width:10%">
+					<div class="input-group input-group-sm">
+					  <input type="text" class="form-control" name="dbpage" value="10">
+					  <span class="input-group-addon">秒</span>
+					</div>							
+				</td>
+				<td class="text-right" style="width:10%">线条粗细</td>
+				<td style="width:10%">
+					<select name="borderwidth" class="form-control input-sm">						
+	                    <option value="0">无线条</option>
+	                    <option value="1">▁</option>
+	                    <option value="2">▂</option>
+	                    <option value="3">▃</option>
+	                    <option value="4">▄</option>
+					</select>
+				</td>
+				<td class="text-right"  style="width:10%">图片路径</td>
+				<td colspan="3"><input type="text" name="path" class="form-control input-sm" value="10" /></td>
+				
+			</tr>
+		</table>
+	</div>
+	<div id="datainfo">正在加载...</div>
+  </div>
+  
+  <input type="hidden" name="dbcolumnswidth" value="">
+  <input type="hidden" name="dbcolumnstype" value="">
+  <div id="columninfo" style="display:none"></div>
+</div> 
+<script>
+var editTaskFile=${taskfileJson};
+$(function(){
+	Otess.utils.initForm(editTaskFile);
+	Otess.utils.setDuration('db',editTaskFile.tf_duration);
+	jscolor.install();
+
+	//前景色|背景色|字体大小|字体|字型|滚动类型|速度|水平对齐|竖直对齐|行高
+	$("[name='position']").val(editTaskFile.tf_position);	
+	//2|121.43.114.111|3306|root|jinweida|otess|
+	//select a_id,a_code,a_path,a_title,a_pcode,a_order,a_status,a_icon from mp_action|
+	//32,55,144,33|1,1,1,1|10|337|270|10|1|EFEFEF|刷新秒|path
+    var db = editTaskFile.tf_affdate_weather.split('|');
+	console.log( editTaskFile.tf_affdate_weather);
+    $("[name='dbtype']").val(db[0]);
+    $("[name='dbaddress']").val(db[1]);
+    $("[name='dbport']").val(db[2]);
+    $("[name='dbusername']").val(db[3]);
+    $("[name='dbpassword']").val(db[4]);
+    $("[name='dbname']").val(db[5]);
+    $("[name='dbsql']").val(db[6]);
+    $("[name='bordercolor']").val(db[14]);
+    $("[name='borderwidth']").val(db[13]);
+    $("[name='dbpage']").val(db[12]);
+    $("[name='dbpagecount']").val(db[9]);
+    $("[name='path']").val(db[16]);
+    $("[name='db_height']").val(db[11]);
+    $("[name='db_width']").val(db[10]);
+    $("[name='dbtables']").attr("data-selected",db[17]);
+	Otess.utils.setDuration('refresh',db[15]);
+    $("[name='dbcolumnswidth']").val(db[7]);
+    $("[name='dbcolumnstype']").val(db[8]);
+    //2|121.43.114.111|3306|root|jinweida|otess|select a_code,a_path,a_title from mp_action|
+    //161,402,204|1,1,1|5|822|593|5|1|FF9D47|null|/data/www/aa|表
+    
+	$("#dbtables").on("change",function(){
+		var val=$(this).val();
+		var field="";
+		//loading层
+		var index = layer.load(1, {
+		  shade: [0.1,'#efefef'] //0.1透明度的白色背景
+		});
+		$.get("${base}/taskfile/loadcolumns",{dbtablename:$(this).val(),dbtype:$("[name='dbtype']").val()
+			,dbport:$("[name='dbport']").val()
+			,dbaddress:$("[name='dbaddress']").val()
+			,dbusername:$("[name='dbusername']").val()
+			,dbname:$("[name='dbname']").val()
+			,dbpassword:$("[name='dbpassword']").val()
+			},function(result){
+			if(result.code==200){
+				result.list.forEach(function(m,i){
+					if(field!="")field+=",";
+					field+=m.COLUMN_NAME;
+				})
+			}
+			$("#dbsql").val("select "+field+" from "+val);
+			layer.close(index);
+		})
+	})
+})
+</script>

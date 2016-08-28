@@ -1,0 +1,54 @@
+<div id="api_time_${tfModel.tf_id}" style="height:100%;"></div>
+<#if from!="html" && from!="background">
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+</#if>
+<script src="${base}/public/javascript/jquery.clock.js"></script>
+<script>
+$(function(){
+
+	var from="${from}";
+	var file=${tf};
+	var style = from!=='background'?file.tf_style.split('|'):file.tf_style_web.split('|');
+	var time=file.tf_affdate_weather.split("|");
+    var datatype =time[0];
+    var linetype = time[1];
+    var offset = time[2].split(',');//时差
+    var date = false,week = false,time = false;
+    
+    switch(Number(datatype)){
+	    case 1:
+	    	date = true;week = true; time = true;
+	    	break;
+	    case 2:
+	    	date = true; time = true;
+	    	break;
+	    case 3:
+	    	week = true; time = true;
+	    	break;
+	    case 4:
+	    	date = true;
+	    	break;
+	    case 5:
+	    	week = true;
+	    	break;
+	    case 6:
+	    	time = true;
+	    	break;
+	    case 0:
+	    	date=true;
+    }
+    var br = false;
+    if (linetype == 1) br = true;
+    var off = "-" + offset[1];
+    if (offset[0] == 1) off = "+" + offset[1];
+    //.jclock({ withDate: date, withWeek: week, withTime: time, br: br, offset: off})
+    var divtime = $("<div/>").attr({ id: "time" + file.tf_id})
+    	.jclock({withDate: date, withWeek: week, withTime: time, br: br, offset: off})
+    	.css({
+	    	color: "#" + style[0], fontStyle: style[4],fontWeight:style[4], fontFamily: style[3], 
+	    	fontSize: style[2] + "px",textAlign: style[7], verticalAlign: style[8], 
+	    	backgroundColor: "#" + style[1],lineHeight: style[9] + "px"
+	    });
+    $("#api_time_"+file.tf_id).html(divtime);       
+})
+</script>

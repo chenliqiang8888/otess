@@ -1,0 +1,345 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+
+<div class="form-group">
+  <div class="pull-left">
+    <ul class="list-inline">
+      <li>
+        <select class="form-control" name="t_status">
+	      <option value="">全部任务</option>
+	      <option value="1" >未完成</option>
+	      <option value="2" >正常</option>
+	      <option value="3" >在播放列表中</option>
+	    </select>
+	    <input type="hidden" id="t_status" value="${t_status!}">
+      </li>
+      <li><button class="btn btn-primary btn-sm" id="send"><span class="glyphicon glyphicon-plus"></span> 发送</button></li>
+      <li><a href="${base}/task/add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span> 新建</a></li>
+      <#if user.r_type!=0>
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="btn btn-primary btn-sm" data-submenu role="button" aria-expanded="false"><span class="glyphicon glyphicon-ok"></span>  审核 <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="#" class="audit" data-order="1" data-url="${base}/task/audit"><span class="glyphicon glyphicon-ok"></span> 通过</a></li>
+          <li class="divider"></li>
+          <li><a href="#" class="audit" data-order="0" data-url="${base}/task/audit"><span class="glyphicon glyphicon-lock"></span> 拒绝</a></li>
+        </ul>      
+      </li>
+      </#if>
+      <li><a href="#" class="btn btn-primary btn-sm" id="deleteTask" data-url="${base}/task/delete"><span class="glyphicon glyphicon-trash"></span> 删除</a></li>
+    </ul>
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<!-- <div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-info-sign"></span> 提示：发送，导入，导出 每次对一个正常的任务进行操作，选择多项系统默认处理第一项。</div> -->
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+  <tr>
+  	<th style="width:30px;"><input type="checkbox" name="chkall"></th>
+  	<th>任务名称</th>
+  	<th style="width:80px">任务状态</th>
+  	<th style="width:80px">任务类型</th>
+  	<th style="width:160px">开始时间</th>
+  	<th style="width:160px">结束时间</th>
+  	<th style="width:80px">审核状态</th>
+  	<th>审核员</th>
+  	<th>所属用户</th>
+  	<th>操作</th></tr>
+  </thead>
+  <tbody>
+  <#list taskPage.getList() as x>
+  <tr>
+    <td><input type="checkbox" name="chk" value="${x.t_id}" data-status="${x.t_status}" data-name="${x.t_name}" data-ostatus="${x.o_status}" ></td>
+    <td><a href="${base}/task/edit/${x.t_id}">${x.t_name}</a></td>
+    <td>
+    	<#if x.t_status == 1>未完成</#if>
+    	<#if x.t_status == 2>正常</#if>
+    	<#if x.t_status == 3>在播放列表中</#if>
+    </td>
+    <td>
+    	<#if x.t_type == 1>紧急任务</#if>
+    	<#if x.t_type == 2>普通任务</#if>
+    	<#if x.t_type == 3>空闲任务</#if></td>
+    <#if x.t_loop == 2>
+    <td>--</td>
+    <td>--</td>
+    <#elseif x.t_loop==0>
+    <td>${x.t_begin_time?string("yyyy-MM-dd HH:mm")}</td>
+    <td>${x.t_end_time?string("yyyy-MM-dd HH:mm")}</td>
+    <#elseif x.t_loop==1>    
+    <td>${x.t_begin_time?string("HH:mm")}</td>	
+    <td>${x.t_end_time?string("HH:mm")}</td>
+    </#if>
+    <td><a href="#" rel="" data-id="${x.t_id}" data-toggle="tooltip" data-placement="bottom" data-original-title="${x.o_mark!}" title="${x.o_mark!}">
+    	<#if x.o_status == 1>
+    	<span class="label label-success">已通过</span>
+    	<#elseif x.o_status == 2>
+    	<span class="label label-danger">未通过</span>
+    	<#else>
+    	<span class="label label-warning">未审核</span>    	
+    	</#if></a></td>
+    <td>${x.ousername!}</td>
+    <td>${x.username!}</td>
+    <td><a href="${base}/task/preview?t_id=${x.t_id}" target="_blank">预览</a></td>
+  </tr>
+  </#list>
+  </tbody>
+</table>
+<#include "/views/com/_paginate.html" />
+<@paginate currentPage=taskPage.pageNumber totalPage=taskPage.totalPage actionUrl="${base}/task/list"  urlParas="${searchCon}"/>
+</#if>
+<div class="modal fade" id="modal_send" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+    <form class="form-inline" id="form-send">
+	    <div class="modal-content">
+	        <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">发送任务到在线终端</h4>
+	        </div>
+	        <div class="modal-body" style="min-height:520px;"> 
+	        	<p>
+	        	<!-- <label class="checkbox-inline">
+				  <input type="checkbox" name="sendmethod" value="0"> 以 P2P 方式发送  
+				</label>
+				<label class="checkbox-inline">
+				  <input type="checkbox" name="sendmethod" value="1"> 自动转发
+				</label> -->
+	          	<label class="radio-inline">
+				  <input type="radio" name="sendtype" value="1" checked> 手动发送
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="sendtype" value="2"> 自动发送
+				</label>
+				<input type="text" name="sendtime" class="form-control input_date" readonly="" value="" placeholder="发送时间">
+				
+				</p>
+				<div class="form-group form-group-sm">
+			    	<div class="input-group">
+			    	<input type="text" class="form-control" name="cl_name" placeholder="机器名">
+			    	<span class="input-group-btn">
+			        	<button type="button" class="btn btn-primary btn-sm" id="sendtasktoclient">
+			   			<span class="glyphicon glyphicon-search"></span></button>
+			        </span>
+			    	</div>        
+			    </div>
+			  	<div class="form-group form-group-sm">
+			    	<div class="input-group">
+			    	<input type="text" class="form-control" name="cl_ip" placeholder="IP地址">
+			    	<span class="input-group-btn">
+			        	<button type="button" class="btn btn-primary btn-sm" id="sendtasktoclient1">
+			   			<span class="glyphicon glyphicon-search"></span></button>
+			        </span>
+			    	</div>        
+			    </div>
+			  	<div class="form-group form-group-sm">
+			    	<div class="input-group">
+			    	<input type="text" class="form-control" name="cl_fold" placeholder="分组名">
+			    	<span class="input-group-btn">
+			        	<button type="button" class="btn btn-primary btn-sm" id="sendtasktoclient2">
+			   			<span class="glyphicon glyphicon-search"></span></button>
+			        </span>
+			    	</div>        
+			    </div>
+			    <div class="modal-table" style="margin-top:10px;max-height:420px;overflow-y:auto"></div>
+	        </div>                    
+	        <div class="modal-footer">
+		        <button type="button" class="btn btn-primary" id="ok">确定</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	        </div>
+	    </div>
+    </form>
+    </div>
+</div> 
+<!-- 拒绝理由  -->
+<div class="modal fade" id="auditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><span id="title"></span>拒绝原因</h4>
+      </div>
+      <div class="modal-body">
+        <textarea rows="4" col="4" class="form-control" name="o_mark" id="o_mark"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="saveAudit">保存</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<#if section="script">
+<script src="${base}/public/javascript/StringBuilder.js"></script>
+<script src="${base}/public/javascript/jquery.treeview.js"></script>
+<script src="http://cdn.bootcss.com/lodash.js/3.10.1/lodash.min.js"></script>
+<script>
+$(function(){
+	$("[data-toggle='tooltip']").tooltip();
+	$("select").val($("#t_status").val());
+	$("select").change(function () {
+        location.href = "${base}/task/list?t_status=" + $(this).val();
+    })
+    //审核操作
+    $(".audit").on("click",function(){
+    	var audit=function(data){
+        	$.get(data.url,data,function(result){
+        		console.log(result);
+        		if(result.code==200){
+        			Otess.utils.success(result.message)
+        			setTimeout(function(){
+    					location.reload();
+    				}, 2000);
+        		}else{
+        			Otess.utils.fail(result.message)
+        		}
+        	})
+    	}
+    	
+    	var data={o_status:$(this).data("order"),t_id:$("[name='chk']").CheckVal(),url:$(this).data("url")};
+    	if(data.o_status===0){
+    		$("#auditModal").modal("show");
+    		$("#saveAudit").on("click",function(){
+    			data.o_mark=$("#o_mark").val();
+        		audit(data);
+    		})
+    	}else{
+    		audit(data);
+    	}    	
+    })
+    $("#deleteTask").on("click",function(){
+	    var _ids = "",url=$(this).data("url");
+	    $("input[name='chk']").each(function () {
+	      if ($(this).is(":checked")) {
+	        if (_ids !== "") _ids += ",";
+	        _ids += $(this).val();
+	      }
+	    });
+	    if(_ids==="")return;
+	    
+	    $.smkConfirm({
+	      text:"确认删除选中项？",
+	      accept:'删除',
+	      cancel:'取消'
+	    },function(res){
+	      if (res) {
+	    	$.get(url,{ids:_ids},function(result){
+    			Otess.utils.success(result.message);
+    			setTimeout(function(){
+					location.reload();
+				}, 2000);
+	    	})
+	      }
+	    });
+	});
+    var taskid="";
+	//发送任务
+	$("#send").on("click",function(){
+        $("[name='chk']").each(function (i) {
+            if ($(this).is(':checked')) {
+                var status = $(this).data("status"),ostatus = $(this).data("ostatus");
+                if (status >= 2 && status <= 5) {
+                	taskid = $(this).attr("value");
+                }
+                if (ostatus != 1) {
+                	taskid = "-1";
+                }
+
+                return false;
+            }
+        });
+        if (taskid == "") {
+        	Otess.utils.fail("请选择正常的任务发送！");
+            return false;
+        }
+        if (taskid == "-1") {
+        	Otess.utils.fail("请选择已审核的任务发送。");
+            return false;
+        }
+        var j = 0;
+        $("[name='chk']").each(function (i) {
+            if ($(this).is(':checked')) {
+                j++;
+            }
+        });
+        if (j > 1) {
+        	Otess.utils.fail("每次只能发送一个正常任务！");
+            return false;
+        }
+        $("#modal_send").modal();
+        getClients();
+	})
+	var ajax=new Ajax();
+	$("#sendtasktoclient,#sendtasktoclient1,#sendtasktoclient2").click(function () {
+		getClients();
+    });
+	$("#ok").on("click",function(){
+    	var task=$("#form-send").serializeArray();
+    	task.push({name:"taskid",value:taskid});
+    	task.push({name:"clientids",value:$("[name^='c_']").CheckVal()});
+		ajax.post("${base}/logsend/sendToClient",task,function(result){
+			if(result.code!=200){
+				Otess.utils.fail("请选择要发送的终端！")
+			}else{
+				Otess.utils.success("发送成功！");
+				setTimeout(function(){
+					location.href = "${base}/logsend/list";
+				}, 2000);
+
+			}
+		})
+	})
+	var getClients=function(){
+        ajax.get("${base}/client/getClientAndFoldByGroupId",$("#form-send").serializeArray(),function(result){
+        	console.log(result)
+        	if(result.fold.length>0){
+        		result.fold.push({cf_id:-2,cf_name:"未分组",cf_pid:0});
+        		var ul=new StringBuilder();
+        		console.log(_.findIndex(result.client, { 'cl_fold_id': 0 }));
+        		var TreeHtml=function(ul,currentid,parentid,classname){
+        			ul.AppendFormat("<ul class='{0}'>",classname);
+        			if(_.findIndex(result.client, { 'cl_fold_id': currentid })>-1 && currentid!=0){
+        				ul.Append("<li>");
+                        ul.Append("<table class=\"table table-bordered table-condensed\"><thead><tr><th style=\"width:25px;\"  data-sort-ignore=\"true\"></th><th>机器名</th><th>IP地址</th></tr></thead>");
+                         _.where(result.client,{ 'cl_fold_id': currentid }).forEach(function(m,index){
+                        	ul.AppendFormat("<tr><td><input type=\"checkbox\" name=\"c_{0}\" value=\"{1}\"/></td><td>{2}</td><td>{3}</td></tr>", [currentid, m.cl_id, m.cl_name, m.cl_ip]);
+                        })
+                        ul.Append("</table>");
+                        ul.AppendFormat("</li>");
+        			}else if(currentid===-2){//找出没分组的
+                        if (_.findIndex(result.client, { 'cl_fold_id': 0 }) >-1)
+                        {
+                            ul.AppendFormat("<li class=\"expandable\">");
+                            ul.Append("<table class=\"table table-bordered table-condensed\"><thead><tr><th style=\"width:25px;\" data-sort-ignore=\"true\"></th><th>机器名</th><th>IP地址</th></tr></thead>");
+                            _.where(result.client,{ 'cl_fold_id': 0 }).forEach(function(m,index){
+                            	ul.AppendFormat("<tr><td><input type=\"checkbox\" name=\"c_{0}\" value=\"{1}\"/></td><td>{2}</td><td>{3}</td></tr>", [currentid, m.cl_id, m.cl_name, m.cl_ip]);
+                            })
+                            ul.Append("</table>");
+                            ul.AppendFormat("</li>");
+                        }
+                    }
+        			_.where(result.fold,{ 'cf_pid': parentid }).forEach(function(m,index){
+        				ul.Append("<li class=\"collapsable\">");
+        				ul.AppendFormat("<label  class=\"checkbox-inline\" style=\"margin-top:-10px\"><input type=\"checkbox\" name=\"f_{0}\"> {1}</label>", [m.cf_id,m.cf_name]);
+                        TreeHtml(ul, m.cf_id, m.cf_id,"");
+                        ul.Append("</li>");
+                    })
+                    ul.Append("</ul>");
+        		}
+        		TreeHtml(ul,-1,-1,"filetree treeview");
+        		console.log(ul.ToString())
+	       		$(".modal-table").html(ul.ToString()).find(".filetree").treeview({
+                    toggle: function () {
+                        console.log("%s was toggled.", $(this).find(">span").text());
+                    }
+                }).find("[name^='f_']").on("click", function () {
+                    $(this).parent().next().find(':checkbox').prop('checked', this.checked);
+                });
+        	}
+        });
+	}
+})
+</script>
+</#if>
+</@layout>

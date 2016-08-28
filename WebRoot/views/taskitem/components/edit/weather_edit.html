@@ -1,0 +1,87 @@
+<input type="hidden" name="index" value="${taskfile.tf_index}">
+<input type="hidden" name="valign" value="top">
+<input type="hidden" name="backgroundcolor" value="">
+<input type="hidden" name="scrolltype" value="none">
+<input type="hidden" name="speed" value="0">
+<input type="hidden" name="tf_id" value="${taskfile.tf_id}">
+<input type="hidden" name="tf_media_no" value="${taskfile.tf_media_no}">
+<table class="table table-condensed">
+	<tr>
+		<td class="text-right">持续时长</td>
+		<td colspan="3">
+			<ul class="list-inline">
+				<li><input type="text" name="weatherhour" style="width: 45px;"
+					class="form-control input-sm" value="01" /></li>
+				<li>时</li>
+				<li><input type="text" name="weatherminute"
+					class="form-control input-sm" style="width: 45px;" value="00" /></li>
+				<li>分</li>
+				<li><input type="text" name="weathersecond" value="00"
+					style="width: 45px;" class="form-control input-sm" /></li>
+				<li>秒</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right">选择布局</td>
+		<td colspan="3"><select name="position"
+			class="form-control input-sm" data-val="${taskfile.tf_position}"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right" style="width:20%">文本颜色</td>
+		<td style="width:30%"><input type="text" name="color"
+			class="form-control input-sm color {required:false,hash:false,pickerClosable:true}" value=""/></td>
+		<td class="text-right" style="width:20%">文本大小</td>
+		<td style="width:30%"><select name="fontsize" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">字体</td>
+		<td><select name="family" class="form-control input-sm"></select></td>
+		<td class="text-right">字型</td>
+		<td><select name="fonttype" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">水平对齐</td>
+		<td><select name="align" class="form-control input-sm"></select></td>
+		<td class="text-right">垂直对齐</td>
+		<td><select name="valign" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">显示内容</td>
+		<td><select name="datatype" class="form-control input-sm"></select></td>
+		<td class="text-right">显示多行</td>
+		<td><select name="linetype" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">城市</td>
+		<td colspan="3">
+		<ul class="list-inline">
+			<li><select id="province" class="form-control input-sm" name="province"></select></li>
+			<li><select id="city" class="form-control input-sm" name="city"></select></li>
+			<li style="display:none;"><select id="area" class="form-control input-sm" name="area"></select></li>
+		</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right">行高</td>
+		<td><select name="lineheight" class="form-control input-sm"></select></td>
+		<td colspan="2"></td>
+	</tr>
+</table>
+
+<script>
+$(function(){
+	var editTaskFile=${taskfileJson};
+	Otess.utils.initForm(editTaskFile);
+	Otess.utils.setDuration('weather',editTaskFile.tf_duration);
+	jscolor.install();
+
+	//前景色|背景色|字体大小|字体|字型|滚动类型|速度|水平对齐|竖直对齐|行高
+    var weather = editTaskFile.tf_affdate_weather.split('|');
+	$("[name='position']").val(editTaskFile.tf_position);	
+	var d=weather[2].split(',');
+	$("[name='datatype']").val(weather[0]);
+	$("[name='linetype']").val(weather[1]);
+	Otess.utils.city.init('province', 'city', 'area', d[0], d[1], d[2]);  
+})
+</script>

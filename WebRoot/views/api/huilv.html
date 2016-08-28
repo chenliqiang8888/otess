@@ -1,0 +1,31 @@
+
+<div id="api_huilv_${tfModel.tf_id}">${huilv}</div>
+<#if from!="html" && from!="background">
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+</#if>
+<script>
+$(function(){
+	var from="${from}";
+	var file=${tf};
+	var style = from!=='background'?file.tf_style.split('|'):file.tf_style_web.split('|');
+	var dom=$("#api_huilv_"+file.tf_id);
+    if (style[4] == "bold") {
+    	dom.find("table td").css("font-weight", style[4]);
+    }
+
+    if (style[1] != "") {
+    	dom.find("table td,table th").css("border", "1px solid #" + style[1]);
+    }
+    dom.find("table td").css({
+        "color": "#" + style[0], "font-size": style[2]+"px",
+        "font-family": style[3], "font-style": style[4], "text-align": style[5], "vertical-align": style[6],
+        "height": style[9]
+    })
+    dom.find("table").css("width", "100%").css("border-collapse", "collapse")
+		.attr("cellpadding", "0")
+		.attr("cellspacing", "0")
+    	.find("table").find("td").each(function () {
+        	if ($(this).text() == "") $(this).html("&nbsp;");
+    	});
+})
+</script>

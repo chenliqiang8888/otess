@@ -1,0 +1,4 @@
+jdbcUrl = jdbc:mysql://123.57.3.145:3306/otess?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+user = root
+password = Otess  008
+devMode = true

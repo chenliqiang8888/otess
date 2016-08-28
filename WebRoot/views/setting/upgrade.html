@@ -1,0 +1,82 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+<div class="form-group">
+  <div class="pull-left">
+    
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<div class="page-header">
+  <h3><span class="glyphicon glyphicon-wrench"></span> 升级管理</h3>
+</div>
+<form class="form-horizontal" id="formUpgrade" action="${base}/setting/doupgrade">
+
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">版本号</label>
+    <div class="col-sm-6">
+   		<input type="text" class="form-control" id="version" placeholder="版本号" name="u.version" value="" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'/>
+    </div>    
+  </div>
+  <div class="form-group">
+    <label for="mr_w" class="col-xs-2 control-label">升级描述</label>
+    <div class="col-xs-6">
+    <textarea rows="8" class="form-control" id="desc" name="u.desc" placeholder="升级描述,一行一条描述"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+	<label for="mr_w" class="col-xs-2 control-label">升级包地址</label>
+    <div class="col-xs-6">
+    <input type="text" class="form-control" id="downloadurl" name="u.downloadurl" placeholder="升级包地址"  required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+    </div>
+  </div>
+  <div class="form-group">
+	<label for="mr_w" class="col-xs-2 control-label">是否强制</label>
+    <div class="col-xs-6">
+	<input id="switch-force" type="checkbox" data-on-text="强制" data-off-text="不强制">
+	<input type="hidden" id="force" name="u.force" value="false">
+	</div>
+  </div>
+  <div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary save">提交</button>
+    </div>
+  </div>
+</form>
+</#if>
+<#if section="script">
+<script>
+$(function(){
+	var upgrade=JSON.parse(${upgrade});
+	Object.keys(upgrade).forEach(function(key){
+		if(key==='force'){
+			console.log(typeof Boolean(upgrade[key]));
+			var flag=upgrade[key]==="true"?true:false;
+			$("#switch-" + key).bootstrapSwitch('state', flag);
+		}
+
+		$("#"+key).val(upgrade[key]);	
+	})
+	$('#switch-force').bootstrapSwitch().on('switchChange.bootstrapSwitch',function(e,data){
+		$("#force").val(data);
+	});
+    $('#formUpgrade').bootstrapValidator().on('success.form.bv', function(e) {
+        e.preventDefault();
+        var form = $(e.target),
+        validator = form.data('bootstrapValidator'),
+    	url=form.attr("action");
+        var data=form.serializeArray();
+        $.post(url,data,function(result){
+    	    console.log(result);
+    	    if(result.code==200){
+			    Otess.utils.success();
+    	    }else{
+			    Otess.utils.fail(result.message);
+    	    }
+        })
+    });
+})
+</script>
+</#if>
+</@layout>

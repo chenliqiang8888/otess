@@ -1,0 +1,144 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+<div class="form-group">
+  <div class="pull-left">
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<div class="page-header">
+  <h3>编辑用户</h3>
+</div>
+  
+<form class="form-horizontal" id="formUser" action="${base}/user/doupdate" method="post"  data-bv-message="This value is not valid" data-bv-feedbackicons-valid="glyphicon glyphicon-ok" data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+  <input type="hidden" value="${model.uid}" name="user.uid"/>
+  <div class="form-group">
+    <label for="t_name" class="col-xs-2 control-label">用户名</label>
+    <div class="col-xs-5">
+      <input type="text" class="form-control" id="username" readonly value="${model.username}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="t_name" class="col-xs-2 control-label">密码</label>
+    <div class="col-xs-5">
+      <input type="password" class="form-control" id="password" name="user.password" value="${model.password}" placeholder="密码" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="t_type" class="col-xs-2 control-label">角色</label>
+    <div class="col-xs-5">
+      <select class="form-control" name="user.roleid" id="roleid">
+      	<#list role as x>
+        <#if x.r_type!=2>
+        <#if x.r_id==model.roleid>
+        <option value="${x.r_id}" data-type="${x.r_type}" selected>${x.r_name}</option>
+        <#else>
+        <option value="${x.r_id}" data-type="${x.r_type}">${x.r_name}</option>      
+        </#if>
+        </#if>        
+		</#list>
+	  </select> 
+    </div>
+  </div>	
+  <div class="form-group" id="pid">
+    <label for="t_type" class="col-xs-2 control-label">审核员</label>
+    <div class="col-xs-5">
+      <select class="form-control" name="user.pid">
+      	<option value="0">请选择审核员</option>
+        <#list userlist as x>
+        <#if x.uid==model.pid>
+        <option value="${x.uid}" selected>${x.username}</option>
+        <#else>
+        <option value="${x.uid}">${x.username}</option>        
+        </#if>
+		</#list>
+	  </select> 
+    </div>
+  </div>  
+  <div class="form-group">
+    <label for="t_status" class="col-xs-2 control-label">分组</label>
+    <div class="col-xs-5">
+       <select class="form-control" name="user.groupid" id="groupid">
+       </select>	      
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="t_status" class="col-xs-2 control-label">状态</label>
+    <div class="col-xs-5">
+       <select class="form-control" name="user.status">
+         <option value="1" >正常</option>
+         <option value="0" >停用</option>
+          </select>	      
+    </div>
+  </div>
+  <hr>
+  <div class="form-group">
+    <div class="col-xs-offset-2 col-xs-10">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+      <a href="${base}/user/list" class="btn btn-default btn-sm">返回</a>      
+    </div>
+  </div>
+  </fieldset>
+</form>
+</#if>
+<#if section="script">
+<script>
+$(function(){
+	var data=${fold};
+	var groupid=${model.groupid};
+	var selected="";
+	data.push({cf_name:'控制中心',cf_id:0,cf_info:"控制中心",cf_pid:-1});
+	var result="";
+	var getTree=function(cf_id,level){
+		data.forEach(function(node,index){
+			if(node.cf_pid==cf_id){
+				var split="";
+				for(var i=0;i<level;i++){
+					split+="--";
+				}
+				if(level>0)split="|"+split;
+				result+="<option value=\""+node.cf_id+"\" "+selected+">"+split+node.cf_name+"</option>";
+				getTree(node.cf_id,level+1);
+			}
+		})
+	}
+	getTree(-1,0);	
+	$("#groupid").html(result).val(groupid);
+	var setRole=function (roletype) {
+        if(roletype==0){
+        	$("#pid").show();
+        }else{
+        	$("#pid").hide();
+        }
+    }
+	setRole($("#roleid").find("option:selected").data("type"));
+	$("#roleid").on("change",function(){
+		setRole($("#roleid").find("option:selected").data("type"));
+	})
+	$('#formUser').bootstrapValidator().on('success.form.bv', function(e) {
+	    e.preventDefault();
+	    var $form = $(e.target),
+	        validator = $form.data('bootstrapValidator'),
+	    	url=$form.attr("action");
+	    var data=$form.serializeArray();
+	    new Ajax().post(url,data,function(result){
+	    	console.log(result);
+	    	if(result.code==200){
+		    	location.href="${base}/user/list";
+	    	}else{
+		    	$.smkAlert({
+	    		    text: result.message,
+	    		    type: 'danger',
+	    		    position:'top-center',
+	    		    time: 2
+	        	});
+	    	}
+	    })
+  	});
+
+})
+</script>
+</#if>
+</@layout>

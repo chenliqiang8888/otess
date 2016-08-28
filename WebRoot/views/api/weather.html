@@ -1,0 +1,62 @@
+<#if from!="background" && from!="html">
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>奥特思-数字媒体发布系统</title> 
+  <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script> 
+</head> 
+<body>
+</#if>
+<div id="api_weather_${tfModel.tf_id}" style="height:100%;"></div>
+
+<script>
+$(function(){
+	var from="${from}";
+	var file=${tf};
+	var data=${weather};
+	var style = from!=='background'?file.tf_style.split('|'):file.tf_style_web.split('|');
+    var d = file.tf_affdate_weather.split('|');
+    var html = "";
+	console.log(data);
+    var list = data.results;
+    if (data.error) {
+        html = '无数据！';
+    } else {
+    	list.forEach(function(v,index){
+    		var city = v.currentCity;
+    		v.weather_data.forEach(function(k,j){
+    			if (j == d[0]) {
+                    if (d[1] == "1") {
+                        html += "城市：" + city + " ";
+                        html += "<br>";
+                        html += "天气：" + k.weather;
+                        //html += xingqi;
+                        html += "<br>";
+                        html += "温度：" + k.temperature;
+                        html += "<br>";
+                        html += "风力： " + k.wind;
+                    } else {
+                        html += "城市：" + city + " ";
+                        html += "天气：" + k.weather;
+                        html += " 温度：" + k.temperature;
+                        html += " 风力：" + k.wind;
+                    }
+                }
+    		})
+    	})
+    }
+
+    var div = $("<div/>").attr({ id: "weather" + file.tf_id });
+    div.css({
+        "color": "#" + style[0], "font-style": style[4], "font-weight": style[4], "font-family": style[3], "font-size": style[2] + "px",
+        "text-align": style[7], "vertical-align": style[8], "background-color": "#" + style[1], "line-height": style[9] + "px","height":"100%"
+    }).html(html);
+    $("#api_weather_"+file.tf_id).html(div);
+})
+</script>
+<#if from!="background">
+</body>
+</html>
+</#if>

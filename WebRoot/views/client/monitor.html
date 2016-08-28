@@ -1,0 +1,58 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content"> 
+<div class="container-fluid">
+	<div class="page-header">
+	  <h3>远程设备名称：${name!} <small>ip:${ip!}</small>  <a href="#" class="btn btn-info btn-sm"  data-type="10" data-url="${base}/client/command" data-confirm="确定要停止远程监控吗?" id="stop"><span class="glyphicon glyphicon-stop"></span> 停止监控</a> <button type="button" class="btn btn-primary btn-sm refresh"><span class="glyphicon glyphicon-refresh"></span> 刷新</button></h3>
+	</div>
+	<div><img src="${base}/public/images/jiankong.png" style="width:800px" id="img"></div>
+</div>
+
+</#if>
+<#if section="script">
+<script>
+$(function(){
+	var monitor=setInterval(function(){
+		$.get("${base}/client/monitorimg",{deviceid:"${deviceid}"},function(result){
+			if(result){
+				console.log(result);
+				$("#img").attr("src","data:image/png;base64,"+result.i_img);
+			}
+		})		
+	},1000);
+	$(window).on('beforeunload',function(){
+        return '离开监控将停止，确定离开此吗？';
+    }); 
+	$(window).on('unload',function(){ 
+	    alert("获取到了页面要关闭的事件了！"); 
+	}); 
+	$("#stop").on("click",function(){
+		var data={
+   			clientids:'${deviceid}',
+   			ids:0,
+   			type:$(this).data("type"),
+   			param:0
+    	}
+		$.post($(this).data("url"),data,function(result){
+			if(result.code==200){
+				window.clearInterval(monitor); //清楚定时器
+				$.smkAlert({
+		  		    text: "指令已发送！",
+		  		    type: 'success',
+		  		    position:'top-center',
+		  		    time: 2
+		      	});				
+			}else{
+				$.smkAlert({
+		  		    text: "发生异常",
+		  		    type: 'warning',
+		  		    position:'top-center',
+		  		    time: 2
+		      	});
+			}
+		})
+	})
+})
+</script>
+</#if>
+</@layout>

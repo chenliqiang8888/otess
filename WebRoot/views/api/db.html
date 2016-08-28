@@ -1,0 +1,89 @@
+<style>
+table{
+	table-layout:fixed;
+	border-spacing: 0;
+    border-collapse: collapse;
+}
+table th,table td{
+	white-space: nowrap;overflow: hidden;}
+
+</style>
+<div id="api_db_${tfModel.tf_id}"></div>
+<!-- html 用于预览的 background 是建任务时候的 -->
+<#if from!="html" && from!="background">
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+</#if>
+<script src="${base}/public/javascript/jquery.maquee.js"></script>
+<script>
+$(function(){
+	var from="${from}";
+	var file=${tf};
+	//前景色|背景色|字体大小|字体|字型|滚动类型|速度|水平对齐|竖直对齐|行高|缩放比例
+	var style = file.tf_style_web.split('|'),db=file.tf_affdate_weather.split('|');
+	if(from!=='background'){
+		style=file.tf_style.split('|');
+		if(file.tf_affix_url)db=file.tf_affix_url.split('|');
+	}
+	var dom=$("#api_db_"+file.tf_id);
+	//2|123.57.3.145|3306|root|Otess  008|otess|select name,age,aa,sex from stu|56,57,57,57|2,1,1,1|0|300|200|10|1|FFAB7A|3600||stu
+	//2|121.43.114.111|3306|root|jinweida|otess|select a_id,a_code,a_title,a_order,a_pcode from mp_action|
+	//52,46,554,41,38|1,1,1,1,1|5|822|593|5|1|FFD063|3600|10|表
+	var taskfile=[];
+	taskfile.push({name:"dbtype",value:db[0]});
+	taskfile.push({name:"dbaddress",value:db[1]});
+	taskfile.push({name:"dbport",value:db[2]});
+	taskfile.push({name:"dbusername",value:db[3]});
+	taskfile.push({name:"dbpassword",value:db[4]});
+	taskfile.push({name:"dbname",value:db[5]});
+	taskfile.push({name:"dbsql",value:db[6]});
+	var dbpagecount=Number(db[9]),dbpage=Number(db[12]),dbrefresh=Number(db[15]);
+	
+	var database={
+		loadData:function(){
+			$.get("${base}/api/taskfile/loadtabledata/db",taskfile,function(result){
+				console.log(result);
+				if(result.code==200){
+					var table=$("<table/>").width(db[10]).height(db[11]);
+					var columnstype=db[8].split(",");//列类型 1=文字 ,2=图片
+					var tablewidth=db[7].split(",");//表宽
+		    		//循环绑定数据
+		    		result.list.forEach(function(m,i){
+		        		var tr=$("<tr/>");
+		       			Object.keys(m).forEach(function(n,j){
+		       			
+		       				if(columnstype[j]==2){
+		       					tr.append("<td style='width:"+tablewidth[j]+"px'><img style='border:0px;max-width:100%' src='"+db[16]+m[n]+"'></td>");      					
+		       				}else{
+		           				tr.append("<td style='width:"+tablewidth[j]+"px'>"+m[n]+"</td>");    
+		       				}
+		       			})
+		        		table.append(tr);
+		       		})
+		       		table.css({border:db[13] + "px solid #" + db[14]}).find("td").css({
+		    			color: "#" + style[0], fontSize: style[2] + "px",
+		    			fontFamily:style[3], fontStyle: style[4], textAlign: style[7],fontWeight: style[4],
+		    			verticalAlign: style[8] ,height: style[9],border:db[13] + "px solid #" + db[14]
+		            });
+					if(dbpagecount){
+						$("#api_db_"+file.tf_id).html(table).Scroll({ line:dbpagecount , speed: 5000, timer: Number(dbpage) * 1000 });
+					}else{
+						$("#api_db_"+file.tf_id).html(table);
+					}
+					
+				}else{
+					$("#api_db_"+file.tf_id).html('连接数据库超时！');
+				}
+			})
+		}
+	}
+	database.loadData();
+	console.log(dbrefresh);
+	var n=0;
+	if(dbrefresh){
+		setInterval(function(){
+			database.loadData();
+			//console.log(n++);
+		},dbrefresh*1000);
+	}
+})
+</script>

@@ -1,0 +1,53 @@
+@charset "utf-8";
+
+.b-m-mpanel{background:#F0F0F0 url(../images/contextmenu/menu_bg.gif) left repeat-y;border:1px solid #718BB7;padding:2px 0;position:absolute;z-index:99997;left:0px;top:0px;}
+.b-m-split{height:6px;background:url(../images/contextmenu/m_splitLine.gif) center repeat-x;font-size:0px;margin:0 2px;}
+.b-m-item,.b-m-idisable{padding:4px 2px;margin:0 2px 0 3px;cursor:normal;line-height:100%;}
+.b-m-idisable{color:#808080;}
+.b-m-ibody,.b-m-arrow{overflow:hidden;text-overflow:ellipsis;}
+.b-m-arrow{background:url(../images/contextmenu/m_arrow.gif) right  no-repeat;}
+.b-m-idisable .b-m-arrow{background:none;}
+.b-m-item img,.b-m-ifocus img,.b-m-idisable img{margin-right:8px;}
+.b-m-ifocus{background:url(../images/contextmenu/m_item.gif) repeat-x bottom;border:1px solid #AACCF6;padding:3px 1px;margin:0 2px 0 3px;cursor:normal;line-height:100%;}
+.b-m-idisable img{visibility:hidden;}
+table .col-1{text-align:right;padding-right:5px;}
+.ui-dialog-titlebar-close{display:none;}
+body{overflow-y:scroll;max-width:100%;height:auto;}
+.coordinate{color:#fff;background-attachment:scroll;z-index:0}
+.coordinate a{float:left;}dt{background-color:#666;color:#fff;}
+.item{background-color:#634b4b;color:#fff;line-height:20px;border-bottom:1px dashed #fff;}
+.item span{display:inline-block;margin-left:5px;cursor:pointer;}
+.itemchild{line-height:20px;margin-left:2px;}
+.itemchild span{display:inline-block;padding:2px 3px;cursor:pointer;}
+table{word-break:break-all;word-wrap:break-word;}
+.rc-handle-container{position:relative;}
+.rc-handle{position:absolute;width:7px;cursor:ew-resize;margin-left:-3px;}
+html,body, a,p,div, li, span, td, th, label,button,input,select,textarea {font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;}
+html,body{height:100%;margin:0px;}
+div {
+    white-space:normal;word-break:break-all; 
+}
+
+.rc-handle-container {
+  position: relative;
+}
+.rc-handle {
+  position: absolute;
+  width: 7px;
+  cursor: ew-resize;
+  margin-left: -3px;
+  z-index: 2;
+}
+.dialog{
+	display:none;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 12px;
+}
+table{
+	table-layout:fixed;
+}
+table th,table td{
+	white-space: nowrap;overflow: hidden;
+}

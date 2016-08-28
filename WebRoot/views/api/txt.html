@@ -1,0 +1,30 @@
+
+<#if from!="html" && from!="background">
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+</#if>
+<div id="api_txt_${tfModel.tf_id}" style="height:100%;"></div>
+<input type="hidden" value="${txt}" id="txt_${tfModel.tf_id}" >
+<script>
+$(function(){	
+	var from="${from}";
+	// 前景色|背景色|字体大小|字体|字型|滚动类型|速度|水平对齐|竖直对齐|行高|间距
+	var file=${tf},re2 = /\n/g;  //这里仅做了换行替换。;
+	var style = from!=='background'?file.tf_style.split('|'):file.tf_style_web.split('|');
+    var re3 = / /g,content=$("#txt_"+file.tf_id).val().replace(re2, "<br>").replace(re3, "&nbsp;")
+   
+    var txt = $("<div/>").attr({ id: "file" + file.tf_id })
+    	.css({
+            "color": "#" + style[0], "font-style": style[4], "font-weight": style[4], "font-family": style[3], "font-size": style[2] + "px",
+            "text-align": style[7], "vertical-align": style[8], "background-color": "#" + style[1],height:"100%"}
+    	).css({ "line-height": style[9] + "px" })
+    	.html(content);
+    
+    var marquee = $("<marquee/>").attr({ id: "scrollobj_" + file.tf_id, direction: style[5], scrollamount: style[6] })
+    	.css({ width: "100%", height: "100%", "background-color": "#" + style[1] })
+    	.html(txt);
+    if (style[6] == "0")
+    	$("#api_txt_"+file.tf_id).html(txt);
+    else
+    	$("#api_txt_"+file.tf_id).html(marquee);        
+})
+</script>

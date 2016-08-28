@@ -1,0 +1,76 @@
+
+<input type="hidden" name="index" value="${taskfile.tf_index}">
+<input type="hidden" name="valign" value="top">
+<input type="hidden" name="backgroundcolor" value="">
+<input type="hidden" name="scrolltype" value="none">
+<input type="hidden" name="speed" value="0">
+<input type="hidden" name="tf_id" value="${taskfile.tf_id}">
+<input type="hidden" name="tf_media_no" value="${taskfile.tf_media_no}">
+<table class="table table-condensed">
+	<tr>
+		<td class="text-right">持续时长</td>
+		<td colspan="3">
+			<ul class="list-inline">
+				<li><input type="text" name="timehour" style="width: 45px;"
+					class="form-control input-sm" value="01" /></li>
+				<li>时</li>
+				<li><input type="text" name="timeminute"
+					class="form-control input-sm" style="width: 45px;" value="00" /></li>
+				<li>分</li>
+				<li><input type="text" name="timesecond" value="00"
+					style="width: 45px;" class="form-control input-sm" /></li>
+				<li>秒</li>
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right">选择布局</td>
+		<td colspan="3"><select name="position"
+			class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right" style="width:20%">文本颜色</td>
+		<td style="width:30%"><input type="text" name="color"
+			class="form-control input-sm color {required:false,hash:false,pickerClosable:true}" value="000" /></td>
+		<td class="text-right" style="width:20%">文本大小</td>
+		<td style="width:30%"><select name="fontsize" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">字体</td>
+		<td><select name="family" class="form-control input-sm"></select></td>
+		<td class="text-right">字型</td>
+		<td><select name="fonttype" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">水平对齐</td>
+		<td><select name="align" class="form-control input-sm"></select></td>
+		<td class="text-right">行高</td>
+		<td><select name="lineheight" class="form-control input-sm"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">显示内容</td>
+		<td><select class="form-control input-sm" name="timetype"></select></td>
+		<td class="text-right">显示多行</td>
+		<td><select class="form-control input-sm" name="linetype"></select></td>
+	</tr>
+	<tr>
+		<td class="text-right">时区</td>
+		<td colspan="3"><select class="form-control input-sm"
+			name="area"></select></td>
+	</tr>
+</table>
+<script>
+$(function(){
+	var editTaskFile=${taskfileJson};
+	Otess.utils.initForm(editTaskFile);
+	Otess.utils.setDuration('time',editTaskFile.tf_duration);
+	jscolor.install();
+
+	//前景色|背景色|字体大小|字体|字型|滚动类型|速度|水平对齐|竖直对齐|行高
+	$("[name='position']").val(editTaskFile.tf_position);	
+    var weather = editTaskFile.tf_affdate_weather.split('|');
+	$("[name='timetype']").val(weather[0]);
+	$("[name='linetype']").val(weather[1]); 
+	$("[name='area']").val(weather[2]); 
+})
+</script>

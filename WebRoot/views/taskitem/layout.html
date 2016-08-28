@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>奥特思-数字媒体发布系统</title>
+<!-- Bootstrap -->
+<link
+	href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<link href="${base}/public/css/footable.core.min.css" rel="stylesheet">
+<link href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css"
+	rel="stylesheet">
+<link href="${base}/public/css/screen.css" rel="stylesheet">
+<link href="${base}/public/css/ruler.css" rel="stylesheet">
+<link href="${base}/public/css/animate.css" rel="stylesheet">
+<link href="${base}/public/css/smoke.min.css" rel="stylesheet">
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script
+		src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="http://cdn.bootcss.com/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<script>
+    var task={field:${task},item:${taskitem},file:${taskfile},url:{
+    	additem:"${base}/taskitem/add",savescreen:"${base}/taskitem/eidtscreen",edit:"${base}/task/edit/",
+    	detail:"${base}/taskitem/detail",tasklist:"${base}/task/list",deletetask:"${base}/task/delete",
+    	item:"${base}/taskitem/list/",inserttime:"${base}/taskfile/inserttime",deletefile:"${base}/taskfile/delete",
+    	addmedia:"${base}/taskfile/addmedia",uploadfile:"${base}/public/upload/",updatetaskstatus:"${base}/task/doupdatestatus",
+    	edititem:"${base}/taskitem/edit",averagetime:"${base}/taskitem/averagetime",saveas:"${base}/screen/saveas",getFilehtml:"${base}/api/taskfile/get/background",
+    	editfile:"${base}/taskfile/editfile",addfile:"${base}/taskfile/addfile",savefile:"${base}/taskfile/savefile",
+    	loadfile:"${base}/taskfile/loadfile",loadtables:"${base}/taskfile/loadtables",loadtabledata:"${base}/taskfile/loadtabledata",
+    	loadscreen:"${base}/screen/asynall",importscreen:"${base}/taskitem/importscreen",
+    	deleteFileByPosition:"${base}/taskfile/deleteByPosition",sortfile:"${base}/taskfile/sortfile",
+    	},img:{live:"${base}/public/images/live.png"},width:window.screen.width,
+    	height:window.screen.height,default0:"1,0,0,1024,768,default0",prompt:{deletefile:"确定要将该文件移除本任务项吗？",deletescreen:"删除布局将删除布局下的文件，确定移除该布局吗?"
+    			,addfile:"该窗口下文件持续时长总和己超过本任务项持续时间,是否自动延长任务项的持续时间？",averagetime:"确定平均分配该任务项各窗口下的任务文件持续时长吗？",
+    			} 		
+    }; 
+    </script>
+	<script src="${base}/public/javascript/bootstrap-datetimepicker.min.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>	
+	<script src="${base}/public/javascript/jquery.tmpl.min.js"></script>
+	<script src="http://cdn.bootcss.com/lodash.js/3.10.1/lodash.min.js"></script>	
+	<script src="http://cdn.bootcss.com/plupload/2.1.7/plupload.full.min.js"></script>
+	<script src="${base}/public/javascript/layer/layer.js"></script>
+	<script src="${base}/public/javascript/footable.js"></script>
+	<script src="${base}/public/javascript/footable.sort.js"></script>
+	<script src="${base}/public/javascript/footable.paginate.js"></script>
+	<script src="${base}/public/javascript/app.js"></script>
+	<script src="${base}/public/javascript/jquery.ui.rightmenu.js"></script>
+	<script src="${base}/public/javascript/smoke.min.js"></script>		
+	<script src="${base}/public/javascript/jquery.resizableColumns.min.js"></script>
+    <script src="${base}/public/javascript/jquery.scaleline.js"></script>
+	<script src="${base}/public/javascript/jscolor.js"></script>
+	<script src="${base}/public/javascript/otess.utils.js"></script>
+	<script src="${base}/public/javascript/otess.screen.js"></script>
+	<script src="${base}/public/javascript/otess.task.item.js"></script>
+</head>
+<body>
+	<div id="left"></div>
+	<div id="right" style="overflow: auto;"></div>
+	<div class="dialog">
+		<input type="hidden" id="sel_dataindex" name="sel_dataindex" value="0">
+		<form id="dialog-modal-edittaskitem" title="编辑任务项">
+			<div class="form-group form-group-sm">
+				<label for="taskname">任务项名称</label> <input type="text"
+					class="form-control" name="ti_name" maxlength="32"
+					placeholder="任务项名称">
+			</div>
+			<div class="form-group form-group-sm">
+				<label for="taskname">任务项时长</label>
+				<div class="input-group">
+					<input type="text" class="form-control" name="taskhour"
+						style="width: 40px" placeholder="时" value="01" />
+					<div class="input-group-addon">时</div>
+					<input type="text" class="form-control" name="taskminute"
+						style="width: 40px" placeholder="分" value="00" />
+					<div class="input-group-addon">分</div>
+					<input type="text" class="form-control" name="tasksecond"
+						style="width: 40px" placeholder="秒" value="00" />
+					<div class="input-group-addon">秒</div>
+				</div>
+			</div>
+		</form>
+		<form id="dialog-modal-saveas" title="另存布局">
+			<div class="form-group form-group-sm">
+				<label for="taskname">任务项名称</label> <input type="text"
+					class="form-control" name="sc_name" maxlength="32" placeholder="名称">
+			</div>
+		</form>
+		<form id="dialog-modal-import" title="导入布局">
+			<div class="form-group form-group-sm">
+				<label for="taskname">选择布局</label>
+					<select name="ti_screen_type" class="form-control"></select>
+			</div>
+		</form>
+		<form id="dialog-modal-editscreen" title="编辑布局">
+			<h5 class="text-danger"><span class="glyphicon glyphicon-alert"></span> 提示：宽度最大值=<span id="maxwidth"></span>，高度最大<span id="maxheight"></span></span></h5>
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="form-group form-group-sm">
+						<label for="taskname">X坐标</label> <input type="text"
+							class="form-control" name="x" maxlength="32" placeholder="X坐标">
+					</div>
+					<div class="form-group form-group-sm">
+						<label for="taskname">宽度</label> <input type="text"
+							class="form-control" name="width" maxlength="32" placeholder="布局宽">
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group form-group-sm">
+						<label for="taskname">Y坐标</label> <input type="text"
+							class="form-control" name="y" maxlength="32" placeholder="Y坐标">
+					</div>
+					<div class="form-group form-group-sm">
+						<label for="taskname">高度</label> <input type="text"
+							class="form-control" name="height" maxlength="32" placeholder="布局高">
+					</div>
+				</div>
+			</div>			
+		</form>
+		<form id="dialog-modal-com" title="公共布局"></form>
+	</div>
+	
+</body>
+</html>

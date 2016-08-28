@@ -1,0 +1,112 @@
+@CHARSET "UTF-8";
+html, body, a, p, div, li, span, td, th, label, button, input, select, textarea {
+    font-family: "Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+}
+table{
+	word-break: break-all;
+    word-wrap: break-word;
+}
+#header{
+	z-index: 200;
+    background: #337ab7;
+    min-height: 62px
+}
+#header .nav {
+  margin-right: 15px;
+}
+#header .nav a:hover {
+  background: #337ab7;
+}
+#header .nav .open > a,
+.nav .open > a:focus,
+.nav .open > a:hover {
+  background: #337ab7;
+}
+#header .nav a {
+  padding-top: 20px;
+  font-size: 14px;
+  color: #fff;
+  background: #337ab7;
+}
+a:active,
+a:hover {
+  outline: 0;
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  text-decoration: none;
+  outline: 0;
+}
+.sidebar {
+  position: absolute;
+  top: 60px;
+  width: 200px;
+  left: 0px;
+  bottom: 0px;
+  z-index: 7;
+  background-color: #eee;
+  border-right: 1px solid #eee;
+}
+.main {
+    z-index: 7;
+    margin-left: 200px;
+    margin-top: 60px;
+    padding: 15px;
+}
+.logo{
+    font-size: 1.7em;
+    padding-top:10px;
+    display: inline-block;
+    color: #fff;
+    text-shadow: 0 1px 0 #ffffff;
+}
+
+.panel-heading {
+  border-radius: 0px;
+}
+.panel-group .panel {
+  border-radius: 0px;
+}
+.panel-group .panel+.panel {
+  margin-top: 0px;
+}
+.list-group-item {
+  border-top: 0px;
+  border-bottom: 0px;
+  padding:5px 15px;
+  border-left-color: #d9534f;
+}
+.panel-default {
+  border: 0px;
+  border-bottom: 1px solid #ddd;
+}
+.list-group {
+  border: 0px;
+}
+.list-group a {
+  padding-left: 35px;
+}
+.list-group-item.active,
+.list-group-item.active:focus,
+.list-group-item.active:hover {
+  z-index: 2;
+  color: #d9534f;
+  background-color: #ead7da;
+}
+.panel>.list-group:first-child .list-group-item:first-child,
+.panel>.panel-collapse>.list-group:first-child .list-group-item:first-child {
+  border-top: 0;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+.pagination{
+	margin:0px;
+}
+.table{
+	min-width:1000px
+}
+.modal-table table{
+	min-width:0px;
+}
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+  <title>奥特思-数字媒体发布系统</title>
+  <style>
+  .loginbg
+  {
+   font-size:12px;
+   margin:auto;
+   width:1000px;
+   font-family:Verdana, Georgia;
+   background:url("../public/images/bg.gif") repeat-x top;
+  }
+  #divLogin {
+      width: 710px;
+      height: 276px;
+      background: url("../public/images/bg_login.gif") no-repeat;
+      margin-top: 197px;
+      margin-left: 200px;
+      padding-top: 118px;
+  }
+  .loginaccdiv {
+       width: 575px;
+       text-align: right;
+   }
+   .loginpwddiv {
+       margin-top: 18px;
+       width: 575px;
+       text-align: right;
+   }
+   .loginbtndiv {
+   margin-top: 8px;
+   width: 550px;
+   text-align: right;
+   }
+   .logintxt {
+   width: 145px;
+   border: 0;
+   height: 16px;
+   font-size: 11px;
+   }
+  </style>    
+  <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+  <script>
+  $(function(){
+	  function load() {
+          if ($("#username").val().length == 0) {
+              alert("请输入用户名！");
+              return false;
+          }
+          if ($("#password").val().length == 0) {
+              alert("请输入密码！");
+              return false;
+          }
+          //location.href="${base}/task/list";
+          $.post('${base}/public/dologin',$("form").serializeArray(), function success(result){
+            if(result.code==200){
+            	location.href="${base}/task/list";
+            }else{
+            	alert(result.message);
+            }
+          }, "json");
+      }
+	  $("#load").on("click", function () {
+          load();
+      });
+	  $("input").on("keyup",function(evt){
+		  if (evt.keyCode == 13) {
+              load();
+          }
+	  })
+  })
+  </script>
+</head>
+<body class="loginbg">
+<div id="pLogin">	
+	<div id="divLogin">
+		<form id="formLogin"  method="post" action="${base}/public/dologin">
+		<div class="loginaccdiv"><span class="loginlabel" ></span><input class="logintxt" type="text" id="username" name="username" value=""/></div>
+		<div  class="loginpwddiv"><span class="loginlabel"></span><input class="logintxt" type="password" id="password" name="password" value=""/></div> 
+		<div class="loginbtndiv">
+		<img src="../public/images/Login_Submit.gif" class="btn" id="load" alt="" />
+		<img src="../public/images/Login_Reset.gif" class="btn" onclick="formLogin.reset()" alt=""/></div> 
+		</form>
+	</div>  
+</div>
+</body>
+</html>

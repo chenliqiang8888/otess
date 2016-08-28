@@ -1,0 +1,78 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+<div class="form-group">
+  <div class="pull-left">
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<div class="page-header">
+  <h3>分配菜单权限</h3>
+</div>
+<form class="form-horizontal" id="formaction" action="${base}/role/doupdate" method="post">
+	<div class="well">
+		<ul id="tree" class="ztree"></ul>
+	</div>	
+	<div class="form-group">
+    <div class="col-xs-10">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="history.go(-1)">返回</button>	      
+    </div>
+  	</div>
+</form>
+</#if>
+<#if section="script">
+<script>
+var setting = {
+    check: {
+        enable: true,
+        chkboxType :{ "Y":"ps", "N":"ps"}
+    },
+    data: {
+        key:{
+            name: "a_title"
+        },
+        simpleData: {
+            enable: true,
+            idKey: "a_code",
+            pIdKey: "a_pcode"
+        }
+    },
+    callback:{
+        
+    }
+};
+var data=${action};
+var role=${roleaction};
+$(function(){	
+	data.forEach(function(n,i){
+		role.r_permission.split(',').forEach(function(m,j){
+			if(n.a_code==m){
+				n.checked=true;
+			}
+		})
+	})
+	console.log(data);
+	var tree=$.fn.zTree.init($("#tree"), setting, data);
+    tree.expandAll(true);
+    $("#formaction").on("submit",function(e){
+    	e.preventDefault();
+    	var nodes=tree.getCheckedNodes(true),v="";
+        for(var i=0;i<nodes.length;i++){
+	        if(v!="")v+=',';
+	        v+=nodes[i].a_code;
+        }
+        var $form = $(e.target),url=$form.attr("action");
+        new Ajax().post($form.attr("action"),{r_permission:v,r_id:role.r_id},function(result){
+        	if(result.code==200){
+            	Otess.utils.success();
+        	}else{
+        		Otess.utils.fail();
+        	}
+        })      
+    })    
+})
+</script>
+</#if>
+</@layout>

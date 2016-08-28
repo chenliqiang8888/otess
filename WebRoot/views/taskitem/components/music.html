@@ -1,0 +1,53 @@
+<div class="form-inline">
+	<div class="form-group form-group-sm">
+    	<div class="input-group">
+    	<input type="text" class="form-control" name="m_name" placeholder="资源名称"/>
+    	<span class="input-group-btn">
+        	<button type="button" id="search" class="btn btn-primary btn-sm">
+   			<span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    	</div>        
+    </div>
+</div>
+<table  id="table-addfile" class="table table-striped table-condensed"
+	cellspacing="0" width="100%" data-page="true" data-page-size="10" data-page-first="false" data-page-next-text="下页" data-page-previous-text="上页">
+	<thead>
+		<tr>
+			<th style="width: 20px;" class="sorting_disabled" data-sort-ignore="true"></th>
+				<th>#</th>
+				<th>资源名称</th>
+				<th>类型</th>
+				<th data-sort-initial="true" data-type="numeric" >时长</th>
+				<th data-sort-initial="true" data-type="numeric" >大小</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+	<tfoot>
+	    <tr>
+	        <td colspan="6">
+	            <ul class="pagination pagination-sm pagination-centered hide-if-no-paging"></ul>								                
+	        </td>
+	    </tr>
+	</tfoot>
+</table>
+<script>
+function loadMedia(options){
+	$.get("${base}/mediafile/getMediaAll",options,function(result){
+		$("#table-addfile tbody").empty();
+		$(".pagination").empty();
+        $.each(result.list, function (i, item) {
+        	var d=(item.m_duration?item.m_duration:"-");
+            var tr = "<tr><td><input type=\"radio\" name=\"chk\" value=\"" + item.m_no + "\"\ data-title=\"" + item.m_name + "\"/></td><td>" + item.m_id + "</td><td>" + item.m_name + "</td><td>" + Otess.utils.renderFileType(item.m_type) + "</td><td>" + d + "</td><td data-value="+item.m_size_high+">" + Otess.utils.renderSize(item.m_size_high) + "</td></tr>";
+
+            $("#table-addfile tbody").append(tr);
+        })
+        $("#table-addfile").footable({debug:true});
+	})
+}
+$(function(){
+	loadMedia({m_type:4});
+	$("#search,[name='m_type']").on("click",function(){
+		loadMedia({m_type:4,m_name:$("[name='m_name']").val()});
+	})
+})
+</script>

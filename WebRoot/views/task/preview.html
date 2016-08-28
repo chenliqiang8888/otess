@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>奥特思-数字媒体发布系统</title>
+<style>
+body{
+	height: 100%;
+    margin: 0px;
+    }
+</style>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/lodash.js/3.10.1/lodash.min.js"></script>
+	<script src="${base}/public/javascript/ckplayer.js"></script>
+	<script src="//cdn.bootcss.com/moment.js/2.10.6/moment.min.js"></script>	
+	<script src="${base}/public/javascript/otess.screen.preview.js"></script>
+	<script src="${base}/public/javascript/jquery.flash.js"></script>
+	<script src="${base}/public/javascript/layer/layer.js"></script>
+	<script>
+    var task={
+    		field:${task},item:${taskitem},file:${taskfile},
+    		url:{
+    			base:"${base}/public/upload/",
+    	    	swf:"${base}/public/tools/mediaplayer.swf",
+    	    	ck:"${base}/public/tools/ckplayer.swf",
+	    		detail:"${base}/taskitem/detail",
+	    		item:"${base}/taskitem/list/",uploadfile:"${base}/public/upload/",
+	    		getFilehtml:"${base}/api/taskfile/get/html"
+    		},
+    		img:{live:"${base}/public/images/live.png"},
+    	}; 	
+    var Class={
+    		getDuration:function(){
+    			var duration=0;
+    			//获取任务的总时长，加入立即播放需要累加任务项的时长
+    	    	if(task.field.t_loop!==2){
+    	    		var a = moment(task.field.t_begin_time);
+    	    		var b = moment(task.field.t_end_time);
+    	    		duration=(b.diff(a, 'seconds'))
+    	    	}else{
+    	        	task.item.forEach(function(m,i){
+    	        		duration+=m.ti_duration;
+    	        	})
+    	    	}
+    			return duration;
+    		},setLayout:function(el,item){
+    			var layout=new Screen({left:el,task:task,item:item});
+    			layout.remove();
+    			layout.create();
+    			Class.setLayOutFile(el,layout,item.ti_id);
+    		},setLayOutFile:function(el,layout,ti_id){
+    			el.children().each(function () {
+                    var index = $(this).data("index"),duration=0;
+                    var files=_.where(task.file,{"tf_position":index,"tf_task_item_id":ti_id});
+                    console.table(files);
+                    files.forEach(function(m,i){                    	
+                    	var postion = m.tf_position,type = m.tf_type;
+                    		duration=Number(duration)+Number(m.tf_duration)
+                    		console.log(duration)
+                        //按布局绑定
+                    	//定时执行任务
+                        if (i == 0) {
+                            layout.bindDefault(m);
+                        }
+                        else {
+                        	
+                        	setTimeout(function(){
+                                layout.bindDefault(m);
+            				},  (duration-Number(m.tf_duration))*1000)
+                        }
+            		});
+                });
+    		}
+    	}
+    $(function(){
+    	var left=$("#left");
+    	left.css({
+			width:task.field.mr_w+"px",
+			height:task.field.mr_h+"px",}
+    	)
+    	
+    	var duration=0;
+    	task.item.forEach(function(m,i){
+    		if(i===0){
+				Class.setLayout(left,m);
+    		}else{
+        		duration=Number(duration)+Number(task.item[i-1].ti_duration);
+    			setTimeout(function(){
+					Class.setLayout(left,m);
+				},  duration*1000)
+    		}
+    		
+    	})    	
+    	
+    	var info=$("#info"),duration=Class.getDuration() ;
+    	info.css({
+            left: "0px", top: "0px", zIndex: 100, position:"fixed", overflow: "hidden",
+            backgroundColor: "#fcf8e3", color: "#c09853", wordBreak: "break-all", wordWrap: "break-word",
+            border: "1px solid #fbeed5",padding:"5px"
+        }).html("共["+task.item.length+"]任务项,倒计时[<span id='duration' class='bg-danger'>"+duration + "</span>]秒");
+    	var g=setInterval(function(){
+    		duration = duration - 1;
+    		if(duration<=0){
+    			cue="任务预览结束";
+    			left.html('');
+    			layer.alert('任务预览结束', {
+   				  icon: 1,
+   				  skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+   				})
+    			window.clearInterval(g);
+    		}
+    		info.find("#duration").html(duration);
+    	},1000)
+    	
+    })
+    </script>
+</head>
+<body>
+	<div id="info"></div>
+	<div id="left"></div>
+	<div id="hide"></div>
+	<div id="sdf"></div>
+	
+</body>
+</html>

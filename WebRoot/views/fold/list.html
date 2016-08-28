@@ -1,0 +1,154 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+
+<div class="row">
+	<div class="col-xs-2">
+		<div class="well" style="min-height:550px;">
+			<ul id="tree" class="ztree"></ul>
+		</div>			
+	</div>
+	<div class="col-xs-10">
+		<form id="formFold" action="${base}/fold/dosave" method="post" 
+			data-bv-message="This value is not valid" 
+			data-bv-feedbackicons-valid="glyphicon glyphicon-ok" 
+			data-bv-feedbackicons-invalid="glyphicon glyphicon-remove" 
+			data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+		  <input type="hidden" value="" name="cf_id" />		  
+		  <div class="form-group">
+		    <label for="cf_name">分组名称</label>
+		    <input type="text" class="form-control" value="" name="cf_name" placeholder="分组名称" required data-bv-trigger="blur" data-bv-notempty-message='必填项目'>
+		  </div>
+		  <div class="form-group">
+		    <label for="cf_name">上级分组</label>
+		  	<select class="form-control" id="cf_pid" name="cf_pid"></select>
+		  </div>
+		  <div class="form-group">
+		    <label for="cf_info">描述</label>
+		    <textarea rows="4" cols="10" class="form-control" name="cf_info" placeholder="描述"></textarea>
+		  </div>
+		  <button type="submit" class="btn btn-primary">保存</button>
+		</form>
+	</div>
+</div>
+</#if>
+<#if section="script">
+<script>
+var setting = {
+    check: {
+        enable: true
+    },
+    edit: {
+		enable: true,
+		editNameSelectAll: true,
+		showRenameBtn:showRenameBtn,
+	},
+    data: {
+        key:{
+            name: "cf_name"
+        },
+        simpleData: {
+            enable: true,
+            idKey: "cf_id",
+            pIdKey: "cf_pid"
+        }
+    },
+    callback:{
+        onClick: zTreeOnClick,
+		beforeRemove: beforeRemove,
+		onRemove: onRemove,
+    }
+};
+var log, className = "dark";
+function showRemoveBtn(treeId, treeNode) {
+	return !treeNode.isFirstNode;
+}
+function showRenameBtn(treeId, treeNode) {
+	return !treeNode.isLastNode;
+}
+function beforeRemove(treeId, treeNode) {
+	className = (className === "dark" ? "":"dark");
+	//showLog("[ "+getTime()+" beforeRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
+	var zTree = $.fn.zTree.getZTreeObj("tree");
+	zTree.selectNode(treeNode);
+	
+	return confirm("确认要删除该分组吗?删除后该分组下所有终端归入未分组中.");
+}
+function onRemove(e, treeId, treeNode) {
+	var cf_ids=getAllChildrenNodes(treeNode,treeNode.cf_id);
+	$.post('${base}/fold/delete',{cf_ids:cf_ids},function(result){
+		console.log(result);
+	})
+}
+function getAllChildrenNodes(treeNode,result){
+    if (treeNode.isParent) {
+      	var childrenNodes = treeNode.children;
+      	if (childrenNodes) {
+          	for (var i = 0; i < childrenNodes.length; i++) {
+          		if(result!=="")result+=",";          		
+             	result += childrenNodes[i].cf_id;
+              	result = getAllChildrenNodes(childrenNodes[i], result);
+          	}
+      	}
+  	}
+  	return result;
+}
+function zTreeOnClick(event, treeId, treeNode) {
+    console.log(treeNode);
+    $("[name='cf_id']").val(treeNode.cf_id);
+    $("[name='cf_name']").val(treeNode.cf_name)
+    $("[name='cf_pid']").val(treeNode.cf_pid);
+    //$obj = $("[name='cf_name']");
+    //$obj.next().text("");
+
+}
+var getAllChildrenNodesByOptions=function(treeNode,result){
+	console.log(treeNode);
+	if (treeNode.isParent) {
+      	var childrenNodes = treeNode.children;
+      	if (childrenNodes) {
+          	for (var i = 0; i < childrenNodes.length; i++) { 
+          		var split="";
+          		for(var j=0;j<=treeNode.level;j++){
+          			split+="--";
+          		}
+             	result += "<option value='"+childrenNodes[i].cf_id+"'>|"+split+childrenNodes[i].cf_name+"</option>";
+              	result = getAllChildrenNodesByOptions(childrenNodes[i], result);
+          	}
+      	}
+  	}
+  	return result;
+}
+setting.check.chkboxType = { "Y":"ps", "N":"ps"};
+var data=${fold};
+$(function(){
+    var ajax=new Ajax();
+	data.push({cf_name:'控制中心',cf_id:0,cf_info:"控制中心",cf_pid:-1});	
+	var loadtree=function (data) {
+        var tree=$.fn.zTree.init($("#tree"), setting, data);
+        tree.expandAll(true);
+        var result="<option value='0'>控制中心</option>";
+        result=getAllChildrenNodesByOptions(tree.getNodes()[0],result);
+        console.log(result);
+        $("[name='cf_pid']").append(result);       
+    }		
+	loadtree(data);
+	$('#formFold').bootstrapValidator().on('success.form.bv', function(e) {
+	    e.preventDefault();
+	    var $form = $(e.target),
+	        validator = $form.data('bootstrapValidator'),
+	    	url=$form.attr("action");
+	    var data=$form.serializeArray();
+	    console.log(data);
+	    ajax.post(url,data,function(result){
+	    	console.log(result);
+	    	if(result.code=200){
+	    		location.reload();
+	    	}
+	    })
+  	});
+	
+})
+</script>
+</#if>
+</@layout>

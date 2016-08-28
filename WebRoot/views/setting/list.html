@@ -1,0 +1,67 @@
+<#include "/views/com/_layout.html" />
+<@layout;section>
+<#if section="content">
+<div class="form-group">
+  <div class="pull-left">
+    
+  </div>
+  <div class="pull-right"></div>
+  <div class="clearfix"></div>
+</div>
+<div class="page-header">
+  <h3><span class="glyphicon glyphicon-list"></span> 基本设定</h3>
+</div>
+<form class="form-horizontal" action="${base}/setting/update">
+  <#list setting as x>
+  <#if x.s_key=='k_log'>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">是否记录操作日志</label>
+    <div class="col-sm-10">
+   		<#if x.s_value=='true'>
+		<input id="switch-state" type="checkbox" name="k_log" data-on-text="是" data-off-text="否" checked>
+		</#if>
+     	<#if x.s_value=='false'>
+		<input id="switch-state" type="checkbox" name="k_log" data-on-text="是" data-off-text="否">
+		</#if>
+    </div>
+  </div>
+  </#if>
+  <#if x.s_key=='k_version'>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">web程序版本</label>
+    <div class="col-sm-6">
+   		<input type="text" class="form-control" name="k_version" value="${x.s_value}" placeholder="web程序版本">
+    </div>
+  </div>
+  </#if>
+  </#list>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="button" class="btn btn-primary" id="save">保存</button>
+    </div>
+  </div>
+</form>
+</#if>
+<#if section="script">
+<script>
+$(function(){
+	$('input[name="k_log"]').bootstrapSwitch().on('switchChange.bootstrapSwitch',function(e,data){		
+		$.get("${base}/setting/update",{k_log:data},function(result){
+			console.log(result);
+		})
+	});
+	$("#save").on("click",function(){
+		$.get("${base}/setting/update",{k_version:$("[name='k_version']").val()},function(result){
+			console.log(result);
+			if(result.code===200){
+				Otess.utils.success("操作成功！");
+				setTimeout(function(){
+					location.reload()
+				},2000);
+			}
+		})
+	})
+})
+</script>
+</#if>
+</@layout>

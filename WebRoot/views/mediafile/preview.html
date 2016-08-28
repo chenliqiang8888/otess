@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>奥特思-数字媒体发布系统</title>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="${base}/public/javascript/jquery.flash.js"></script>
+<script>
+	$(function() {
+		var mediafile = ${mediafile};
+		var filepath = "${base}/public/upload/"+mediafile.m_file;
+		var pluginspage = "http://www.adobe.com/go/getflashplayer";
+		var type = "application/x-shockwave-flash";
+		var src = "#";
+		if (filepath.indexOf(".flv") >= 0)
+			src = $("#mediaswf").val();
+		else {
+			src = filepath;
+			pluginspage = "http://www.microsoft.com/Windows/MediaPlayer/";
+			type = "application/x-mplayer2";
+		}
+		$("#preview").flash({
+			src : src,
+			width : 400,
+			height : 300,
+			type : type,
+			pluginspage : pluginspage,
+			flashvars : {
+				file : filepath,
+				autostart : 1
+			}
+		}, {
+			version : 10
+		});
+	})
+</script>
+</head>
+<body>
+	<input type="hidden" id="mediaswf"
+		value="${base}/public/tools/mediaplayer.swf" />
+	<div id="preview"></div>
+</body>
+</html>
